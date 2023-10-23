@@ -9,3 +9,7 @@ DAY 2
 * Set up toolchain
 * Django boilerplate
 * First commit
+
+DAY 3
+
+* Target: Get the first schema and view working from Django REST framework
