@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -24,6 +25,14 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# ------------------------------------------------
+# SECURITY: Never put these values in source code
+#           because they are highly sensitive.
+#           Instead, store them in environment
+#           variables to be fetched at runtime.
+# ------------------------------------------------
+
+SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
 
 # Application definition
 
@@ -34,6 +43,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # Third Party
+    'rest_framework',
+    # This Project
+    'api',
 ]
 
 MIDDLEWARE = [
