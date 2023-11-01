@@ -2,6 +2,6 @@ from django.urls import path
 from api import views
 
 urlpatterns = [
-    path('cards/', views.get_all_cards),
-    path('cards/<int:pk>/', views.get_one_card),
+    path('cards/', views.GetCards.as_view()),
+    path('cards/<int:pk>/', views.GetCard.as_view()),
 ]
