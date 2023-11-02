@@ -1,9 +1,13 @@
+from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from api.models import Card
-from api.serializers import CardSerializer
+from api.models import (
+    Card,
+    ReadingCross,
+)
+from api.serializers import CardSerializer, ReadingCrossSerializer
 
 
 """
@@ -18,6 +22,7 @@ Because
 """
 
 
+# TODO: Rename? CardList
 class GetCards(APIView):
     """
     This class contains all the API views dealing with an entire tarot deck
@@ -33,10 +38,13 @@ class GetCards(APIView):
         """
         No `post` method written for now
         because the end user will never modify a deck
+
+        TODO: Does that mean the Card model is better stored as a constant?
         """
         pass
 
 
+# TODO: Rename? CardById
 class GetCard(APIView):
     """
     This class contains all the API views dealing with one Card object
@@ -47,6 +55,8 @@ class GetCard(APIView):
           And manipulate through React
           No need to make so many requests for 1 card at a time
           Since the data stored in cards is essentially a constant
+
+    TODO: Does that mean the Card model is better stored as a constant?
     """
 
     def validate(self, request, pk):
@@ -69,4 +79,50 @@ class GetCard(APIView):
         No `post` method written for now
         because the end user will never modify a tarot card
         """
+        pass
+
+
+class ReadingCrossCreate(APIView):
+    """
+    This class contains the API view dealing with one ReadingCross object
+    For only the 'Create' action
+    I don't get why this is a separate class from 'Retrieve', 'Update', 'Delete'
+    Or included in the same class as ReadingCrossList per the DRF tutorial
+    TODO: Revisit code organization for this
+    """
+
+    def validate(self, request):  # TODO: fill out
+        # TODO: if I'm going to use a serializer, this should
+        # be in the serializer
+        pass
+
+    def post(self, request):
+        serializer = ReadingCrossSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ReadingCrossById(APIView):
+    """
+    This class contains all the API views dealing with one ReadingCross object.
+
+    TODO: I don't like overloading this class name to be the same as the model name
+    Though I understand DRF philosophy is that endpoints basically map to CRUD of models
+    I think it gets confusing in a large codebase when someone just searches for `TarotReadingCelticCross`
+    I would prefer naming this something like `APITarotReadingCelticCross` or `TouchTarotReadingCelticCross`
+    But maybe this naming convention is a standard pattern that's clear enough for anyone who works extensively with DRF...
+    """
+
+    def validate(self, request):  # TODO
+        pass
+
+    def get(self, request, pk):  # TODO
+        pass
+
+    def update(self, request, pk):  # TODO
+        pass
+
+    def delete(self, request, pk):  # TODO
         pass
