@@ -1,29 +1,31 @@
 DAY 1 (2 hours)
 
-* Sketch out structure of app
-* Rough outline of project timeline
+* Sketch out design and functionality of app
+* Rough outline of project technical components
 
 DAY 2 (2 hours)
 
 * Set up github repo
 * Set up toolchain
 * Django boilerplate
-* First commit
+* CHECKPOINT: First commit to github
 
 DAY 3 (1 hour)
 
-* Target: Get the first schema and view working from Django REST framework
+* Get the first schema and view working from Django REST Framework
 * Achieved! Only took an hour :)
 * And also solved some minor bugs
+* CHECKPOINT: Can call first API endpoint locally through browser
 
 DAY 4 (2 hours)
 
 * Refactor to class-based views per the Django REST Framework tutorial (why didn't they just say that from the beginning...)
-* Manually retest and everything works - same place as I was on Day 3
-* Annoyed with manual testing - this is good time to write a unit test suite. So I did.
+* Manually retest in the browser and everything works - same place as I was on Day 3, just refactored.
+* Annoyed with manual testing - seems like a good time to write a unit test suite. So I did.
+* CHECKPOINT: Test suite passes locally for 3 API endpoints
 
 NEXT
-* TODO: Add models for Reading, Image, User
+* TODO: Add models for ReadingCelticCross, CardImage, User
 * TODO: Write views for modifying the above
 * TODO: Add user auth as I'm doing the above - if it makes sense
 * Goal: Get all of the API endpoints working locally
