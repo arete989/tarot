@@ -1,10 +1,16 @@
 Why I chose this project: # TODO fill out
-1) interesting topic to keep me engaged
-2) very constrained set of tasks - so I can focus on technical decisions and visual UX design - rather than conceptualizing the functionality of the app. function is super clear and constrained.
+
+1) very constrained set of tasks (vs the health tracker app that I was considering building) - so I can focus on technical decisions and frontend implementation details, adding extra polish - rather than conceptualizing the functionality of the app. function is super clear and constrained.
+2) interesting topic to keep me engaged. I had fun working on this! also a niche topic so I didn't feel like I was building the same set of restaurant review / blogging and notes app / daily tracker app that's been done a bunch of times before. -- tackle a new type of problem which is fun for me to do! -- also show diversity of what can be done with code - a traditionally feminine topic. maybe kind of a litmus test for culture fit? -- want to work somewhere that celebrates this kind of quirkiness and individuality.
 
 Explanation of this log: # TODO fill out
 - Show that I can chunk work appropriately / break down into tickets / stage the appropriate order to do things in / start small and build
-- Comments in the code will explain my technical decisions - similar to discussion that would be on pull requests. TODO: record for interview prep - what I struggle with is culture around PRs and tone being hard to interpret when written, hierarchy.
+- Comments in the code will explain my technical decisions - similar to discussion that would be on pull requests. / show my thought process and how I learn
+- Example of design decision: [link to constants.py] for storing as constants and in [views.py] regarding how to structure endpoints so not sending lots of data over the wire
+
+NOTES TO SELF (this is for interview prep)
+- weaknesses: (1) culture around PRs and giving feedback. tone is hard to read over written text. hierarchy. (2) senior? yes in terms of thinking about maintainability and structure, technical planning, looking at overall architecture. no in terms of repeated experience with industry-wide coding patterns and frameworks - depth/breadth of experience. simply need more data points, ie. once you work with 5-6 different frameworks, you can pick up on the commonalities between them all.
+(for resume) -- link to github. readme documents my thought process, development process, and technical decision making.
 
 DAY 1 (2 hours)
 
@@ -30,21 +36,26 @@ DAY 4 (2 hours)
 * Refactor to class-based views per the Django REST Framework tutorial (why didn't they just say that from the beginning...)
 * Manually retest in the browser and everything works - same place as I was on Day 3, just refactored.
 * Annoyed with manual testing - seems like a good time to write a unit test suite. So I did.
-* CHECKPOINT: Test suite passes locally for 3 API endpoints
+* CHECKPOINT: Test suite passes locally for 3 API endpoints.
 
 DAY 5 (2 hours)
 
 * Add model for ReadingCross and skeleton of views for CRUD ReadingCross
 * Details of how to store a reading are more complicated than I expected and causing me to refactor how I store tarot cards - makes more sense to store tarot cards as a constant rather than model as it will never be updated. Also avoids unnecessary database queries.
-* CHECKPOINT: Test suite passes locally for skeleton of 1 new API endpoint
+* CHECKPOINT: Test suite passes locally for skeleton of 1 new API endpoint.
+
+DAY 6 (2 hours)
+
+* Rip out a bunch of code. I actually have LESS code than I started with. T_T
+* But makes more sense. Store tarot deck as display constants on the frontend rather than Django models. Took a lot of thinking and refactoring to get here.
+* Less code is not a bad thing - cleaner, more maintainable. It's actually harder to write less + good/thoughtful code versus more code.
+* A lot of thinking for such a little bit of code - but it pays off bc when I look at code I wrote 2 years ago and forgot about - it still makes sense and effortless to pick up - bc it was well organized from the start. Like an intuitive UX like the iPhone.
+* CHECKPOINT: Test suite still passes after refactor.
 
 NEXT
-* NEXT: Add constants file for use in ReadingCross but don't delete the old Card code yet
 * NEXT: Build out test suite and additional views for ReadingCross until complete
-* NEXT: Add validation for ReadingCross views.
-* TODO: Figure out how to handle card images
-* TODO: Rip out the Card model as not needed
 * TODO: Add User model and validation to ReadingCross views
+* TODO: Figure out how to handle card images
 * Goal: Get all of the API endpoints working locally
 * Goal: Write test suite to cover all the API endpoints
 * Goal: Deploy and able to call API endpoints from non-local server

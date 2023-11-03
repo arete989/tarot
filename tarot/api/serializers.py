@@ -1,29 +1,11 @@
 from rest_framework import serializers
-from api.models import Card, ReadingCross
+from api.models import CrossReading
 
 
-# TODO: Not convinced these serializers are actually needed
-#       May be an unnecessary extra layer
-#       Part of Django REST Framework boilerplate - try for now
-#       Rip out later if they don't prove their value
-#       Alternative: Just use the Django ORM directly
-class CardSerializer(serializers.ModelSerializer):
+class CrossReadingSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = Card
-        fields = ['id', 'title', 'explanation']
-
-    # TODO: More proof for ripping out this serializer
-    # There is a bug below - use of `Snippets` - that was never caught
-    # Because this code was never run. So it's not very useful.
-    def create(self, validated_data):
-        return Snippets.objects.create(**validated_data)
-
-
-class ReadingCrossSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = ReadingCross
+        model = CrossReading
         fields = [
             'id',
             'created_at',
