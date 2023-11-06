@@ -1,4 +1,6 @@
 from rest_framework import serializers
+
+import api.constants as constants
 from api.models import CrossReading
 
 
@@ -43,3 +45,23 @@ class CrossReadingSerializer(serializers.ModelSerializer):
             'pos9_recap',
             'pos10_recap',
         ]
+
+    def validate(self, data):
+        must_be_valid_tarot_card_names = [
+            'pos1_card',
+            'pos2_card',
+            'pos3_card',
+            'pos4_card',
+            'pos5_card',
+            'pos6_card',
+            'pos7_card',
+            'pos8_card',
+            'pos9_card',
+            'pos10_card',
+        ]
+
+        for card in must_be_valid_tarot_card_names:
+            if data[card] not in constants.TAROT_DECK:
+                raise serializers.ValidationError('This is not a valid tarot card name')
+
+        return data

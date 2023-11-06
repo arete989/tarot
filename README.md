@@ -52,9 +52,16 @@ DAY 6 (2 hours)
 * A lot of thinking for such a little bit of code - but it pays off bc when I look at code I wrote 2 years ago and forgot about - it still makes sense and effortless to pick up - bc it was well organized from the start. Like an intuitive UX like the iPhone.
 * CHECKPOINT: Test suite still passes after refactor.
 
+DAY 7 (2 hours)
+* Add validation to CrossReadingCreate API
+* More tests for CrossReadingCreate API to cover more behavior
+* Downside of using DRF serializers instead of explicit Django ORM - need to read documentation to learn the specifics of DRF serializers versus using already existing knowledge of Django ORM. Serializers are slightly less verbose and more reusable but is it worth the extra activation energy for a new specific framework and added layer? Also: magic behavior and less explicit equals harder to debug - you're debugging by reading docs instead of stepping through code. I'm still very skeptical of using too many abstractions that are specific to frameworks.
+* Another downside of DRF serializers - their API error return schema really sucks. This is showing up when I write unit tests - grabbing the error is not intuitive and requires pdb to figure out the exact schema. And hard to customize the error schema because it's all wrapped up in the serializer abstraction.
+* CHECKPOINT: Test suite now includes validation and still passes.
+
 NEXT
-* NEXT: Build out test suite and additional views for ReadingCross until complete
-* TODO: Add User model and validation to ReadingCross views
+* NEXT: Build out the CrossReadingById class with test coverage
+* TODO: Add User model to ReadingCross views
 * TODO: Figure out how to handle card images
 * Goal: Get all of the API endpoints working locally
 * Goal: Write test suite to cover all the API endpoints

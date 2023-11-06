@@ -31,11 +31,6 @@ class CrossReadingCreate(APIView):
     Or included in the same class as ReadingCrossList per the DRF tutorial
     """
 
-    def validate(self, request):  # TODO: fill out
-        # TODO: if I'm going to use a serializer, this should
-        # be in the serializer
-        pass
-
     def post(self, request):
         serializer = CrossReadingSerializer(data=request.data)
         if serializer.is_valid():
@@ -48,9 +43,6 @@ class CrossReadingById(APIView):
     """
     TODO: Docstring. Comparison versus above.
     """
-
-    def validate(self, request):  # TODO
-        pass
 
     def get(self, request, pk):  # TODO
         pass
