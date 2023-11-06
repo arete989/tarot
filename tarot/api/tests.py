@@ -9,41 +9,57 @@ from api.views import CrossReadingCreate
 
 class TestCrossReadingCreate(TestCase):
 
-    # TODO: Build out this test class and standardize naming
-
     def setUp(self):
-        self.date_of_reading = datetime.date(2020, 1, 1)
-        self.question_asked = 'What will happen?'
-        self.pos1_card = 'queen of swords'
-        self.pos2_card = 'queen of swords'
-        self.pos3_card = 'queen of swords'
-        self.pos4_card = 'queen of swords'
-        self.pos5_card = 'queen of swords'
-        self.pos6_card = 'queen of swords'
-        self.pos7_card = 'queen of swords'
-        self.pos8_card = 'queen of swords'
-        self.pos9_card = 'queen of swords'
-        self.pos10_card = 'queen of swords'
+        self.cross_reading = {
+            'date_of_reading': datetime.date(2020, 1, 1),
+            'question_asked': 'What will happen?',
+            'pos1_card': 'empress',
+            'pos2_card': 'queen of swords',
+            'pos3_card': 'three of swords',
+            'pos4_card': 'hermit',
+            'pos5_card': 'lovers',
+            'pos6_card': 'ace of cups',
+            'pos7_card': 'two of pentacles',
+            'pos8_card': 'eight of pentacles',
+            'pos9_card': 'three of pentacles',
+            'pos10_card': 'ten of cups',
+        }
 
     def test_crossreadingcreate_success(self):
-        
-        # TODO: Build out this test case, look at jelly/api/tests/test_views.py for reference
+        readings = CrossReading.objects.all()
+        self.assertEqual(readings.count(), 0)
 
         request = Mock()
-        request.data = {
-            'date_of_reading': self.date_of_reading,
-            'question_asked': self.question_asked,
-            'pos1_card': self.pos1_card,
-            'pos2_card': self.pos2_card,
-            'pos3_card': self.pos3_card,
-            'pos4_card': self.pos4_card,
-            'pos5_card': self.pos5_card,
-            'pos6_card': self.pos6_card,
-            'pos7_card': self.pos7_card,
-            'pos8_card': self.pos8_card,
-            'pos9_card': self.pos9_card,
-            'pos10_card': self.pos10_card,
-        }
+        request.data = self.cross_reading
 
         response = CrossReadingCreate().post(request)
         self.assertEqual(response.status_code, 201)
+
+        # Make sure that CrossReading object was correctly created in DB
+        readings = CrossReading.objects.all()
+        self.assertEqual(readings.count(), 1)
+        reading = readings[0]
+        self.assertEqual(reading.date_of_reading, self.cross_reading['date_of_reading'])
+        self.assertEqual(reading.question_asked, self.cross_reading['question_asked'])
+        self.assertEqual(reading.pos1_card, self.cross_reading['pos1_card'])
+        self.assertEqual(reading.pos2_card, self.cross_reading['pos2_card'])
+        self.assertEqual(reading.pos3_card, self.cross_reading['pos3_card'])
+        self.assertEqual(reading.pos4_card, self.cross_reading['pos4_card'])
+        self.assertEqual(reading.pos5_card, self.cross_reading['pos5_card'])
+        self.assertEqual(reading.pos6_card, self.cross_reading['pos6_card'])
+        self.assertEqual(reading.pos7_card, self.cross_reading['pos7_card'])
+        self.assertEqual(reading.pos8_card, self.cross_reading['pos8_card'])
+        self.assertEqual(reading.pos9_card, self.cross_reading['pos9_card'])
+        self.assertEqual(reading.pos10_card, self.cross_reading['pos10_card'])
+
+    def test_crossreadingcreate_url(self):
+        pass  # TODO
+        # put this in a separate class?
+
+
+
+
+
+
+
+
