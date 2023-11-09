@@ -1,3 +1,4 @@
+from django.http import Http404
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -24,11 +25,13 @@ using class mixins that come with DRF. Because
 
 class CrossReadingCreate(APIView):
     """
-    TODO: Clean up explanation below
-    This class contains the API view dealing with one ReadingCross object
-    For only the 'Create' action
-    I don't get why this is a separate class from 'Retrieve', 'Update', 'Delete'
-    Or included in the same class as ReadingCrossList per the DRF tutorial
+    This class contains the API views dealing with one CrossReading object.
+
+    But `CrossReadingCreate` has to be separate from `CrossReadingById`
+    because... why? Because this is the pattern followed in DRF tutorial
+    but not sure I understand why they were split up into 2 different classes.
+    Because the URL for each is different? But yes, usually the `Create`
+    action is split off from R, U, D actions. #TODO
     """
 
     def post(self, request):
@@ -41,14 +44,33 @@ class CrossReadingCreate(APIView):
 
 class CrossReadingById(APIView):
     """
-    TODO: Docstring. Comparison versus above.
+    This class contains the API views dealing with one CrossReading object.
+    Except for the `Create` action which is broken out separately.
     """
+    def validate(self, pk):
+        """
+        DRF tutorial suggests calling this get_object but I'm calling
+        it validate because I want to validate user auth in here as well.
+        Unclear where that validation would happen automatically in DRF
+        pattern. #TODO
+        """
+        try:
+            self.reading = CrossReading.objects.get(pk=pk)
+        except CrossReading.DoesNotExist:
+            raise Http404
 
-    def get(self, request, pk):  # TODO
-        pass
+    def get(self, request, pk):
+        self.validate(pk)
+        serializer = CrossReadingSerializer(self.reading)
+        return Response(serializer.data)
 
     def update(self, request, pk):  # TODO
-        pass
+        serializer = CrossReadingSerializer(self.reading, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk):  # TODO
-        pass
+        self.reading.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

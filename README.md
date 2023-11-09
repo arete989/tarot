@@ -59,6 +59,11 @@ DAY 7 (2 hours)
 * Another downside of DRF serializers - their API error return schema really sucks. This is showing up when I write unit tests - grabbing the error is not intuitive and requires pdb to figure out the exact schema. And hard to customize the error schema because it's all wrapped up in the serializer abstraction.
 * CHECKPOINT: Test suite now includes validation and still passes.
 
+DAY 8 (2 hours)
+* Build out all the views in CrossReadingById. This is where the serializer shortens some code.
+* Write test coverage for CrossReadingById. The part that took the longest was getting freeze_time and datetime formats to work correctly for test purposes. Was important to get this right from the start bc IME when tests fail randomly, this is often a cause.
+* CHECKPOINT: Test suite includes CrossReadingById and passes.
+
 NEXT
 * NEXT: Build out the CrossReadingById class with test coverage
 * TODO: Add User model to ReadingCross views

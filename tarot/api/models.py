@@ -16,15 +16,8 @@ class CrossReading(models.Model):
     modified_at = models.DateTimeField(auto_now=True)
     date_of_reading = models.DateField()  # Note this is NOT the same as the date the database record was created
     question_asked = models.TextField()
-    # TODO: Clean up this comment
-    # Originally was ForeignKey
-    # Storing them as numerical ids right now
-    # So that I can chunk the coding work
-    # And because I'm considering moving Card model to a constant instead
-    # -------------------------------------------------------------------
-    # Storing these as CharField rather than IntegerField
+    # Storing the card names as CharField rather than IntegerField
     # Because it makes more sense to refer to tarot cards that way
-    # And it's short enough to search easily in dict
     pos1_card = models.CharField(max_length=100)
     pos2_card = models.CharField(max_length=100)
     pos3_card = models.CharField(max_length=100)
