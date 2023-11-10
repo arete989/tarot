@@ -1,5 +1,5 @@
-from django.http import Http404
 from rest_framework import status
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -57,7 +57,11 @@ class CrossReadingById(APIView):
         try:
             self.reading = CrossReading.objects.get(pk=pk)
         except CrossReading.DoesNotExist:
-            raise Http404
+            # DRF tutorial suggests raising django.http.Http404 here
+            # But I'm raising ValidationError instead because it gives
+            # more info about the error state to the API consumer
+            # versus just a 404 - which helps the API consumer debug
+            raise ValidationError('You are trying to access a reading that does not exist. Check the specified id.')
 
     def get(self, request, pk):
         self.validate(pk)
@@ -71,6 +75,7 @@ class CrossReadingById(APIView):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, pk):  # TODO
+    def delete(self, request, pk):
+        self.validate(pk)
         self.reading.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

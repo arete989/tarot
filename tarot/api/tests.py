@@ -191,7 +191,7 @@ class TestCrossReadingById(TestCase):
         )
         self.reading2.save()
 
-    def test_crossreadingbyid_get(self):
+    def test_crossreadingbyid_get_success(self):
         request = Mock()
         pk = self.reading2.id
 
@@ -235,3 +235,67 @@ class TestCrossReadingById(TestCase):
             'pos9_recap': '',
             'pos10_recap': '',
         })
+
+    def test_crossreadingbyid_get_invalidpk(self):
+        request = Mock()
+        pk = self.reading1.id + 100
+
+        with self.assertRaises(ValidationError) as e:
+            response = CrossReadingById().get(request, pk)
+
+        self.assertEqual(
+            e.exception.args[0],
+            'You are trying to access a reading that does not exist. Check the specified id.',
+        )
+
+    def test_crossreadingbyid_update_success(self):
+        pass
+
+    def test_crossreadingbyid_update_invalidpk(self):
+        pass
+
+    def test_crossreadingbyid_update_invaliddata(self):
+        pass
+
+    def test_crossreadingbyid_update_missingdata(self):
+        pass
+
+    def test_crossreadingbyid_delete_success(self):
+        readings = CrossReading.objects.all()
+        self.assertEqual(readings.count(), 2)
+
+        request = Mock()
+        pk = self.reading1.id
+
+        response = CrossReadingById().delete(request, pk)
+        self.assertEqual(response.status_code, 204)
+
+        # Check that reading1 was deleted and reading2 is still there
+        readings = CrossReading.objects.all()
+        self.assertEqual(readings.count(), 1)
+        self.assertEqual(readings[0].id, self.reading2.id)
+
+    def test_crossreadingbyid_delete_invalidpk(self):
+        """
+        This is why test driven development is important.
+        Originally I thought this test case was redundant/overkill.
+        But it wasn't until I wrote this test case that I realized
+        I had forgotten to write the code for validation.
+        """
+        readings = CrossReading.objects.all()
+        self.assertEqual(readings.count(), 2)
+
+        request = Mock()
+        pk = self.reading1.id + 100
+
+        with self.assertRaises(ValidationError) as e:
+            response = CrossReadingById().delete(request, pk)
+
+        self.assertEqual(
+            e.exception.args[0],
+            'You are trying to access a reading that does not exist. Check the specified id.',
+        )
+
+        # Check that nothing was deleted in the DB
+        readings = CrossReading.objects.all()
+        self.assertEqual(readings.count(), 2)

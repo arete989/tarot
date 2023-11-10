@@ -66,10 +66,10 @@ DAY 8 (2 hours)
 
 NEXT
 * NEXT: Build out the CrossReadingById class with test coverage
+* NEXT: Wire up the URLs and write test coverage
 * TODO: Add User model to ReadingCross views
 * TODO: Figure out how to handle card images
 * Goal: Get all of the API endpoints working locally
-* Goal: Write test suite to cover all the API endpoints
 * Goal: Deploy and able to call API endpoints from non-local server
 
 
