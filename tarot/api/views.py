@@ -68,7 +68,12 @@ class CrossReadingById(APIView):
         serializer = CrossReadingSerializer(self.reading)
         return Response(serializer.data)
 
-    def update(self, request, pk):  # TODO
+    def put(self, request, pk):
+        """
+        Changed from `update` to `put`. Need to send the whole object
+        at once in order to be idempotent.
+        """
+        self.validate(pk)
         serializer = CrossReadingSerializer(self.reading, data=request.data)
         if serializer.is_valid():
             serializer.save()

@@ -249,16 +249,149 @@ class TestCrossReadingById(TestCase):
         )
 
     def test_crossreadingbyid_update_success(self):
-        pass
+        reading_original = CrossReading.objects.get(pk=self.reading2.id)
+        self.assertEqual(reading_original.question_asked, self.reading2.question_asked)
+        self.assertEqual(reading_original.pos3_card, self.reading2.pos3_card)
+        self.assertEqual(reading_original.pos3_recap, self.reading2.pos3_recap)
+        self.assertEqual(reading_original.pos10_recap, self.reading2.pos10_recap)
+
+        request = Mock()
+        pk = self.reading2.id
+        # Update the value for pos3_card
+        # Add a value for pos10_recap which was blank before
+        # Nothing else is changed
+        # Need to send the entire object again for idempotency
+        updated_pos3_card = 'five of cups'
+        updated_pos10_recap = 'reevaluating this 6 months later'
+        request.data = {
+            'date_of_reading': self.reading2.date_of_reading,
+            'question_asked': self.reading2.question_asked,
+            'pos1_card': self.reading2.pos1_card,
+            'pos2_card': self.reading2.pos2_card,
+            'pos3_card': updated_pos3_card,
+            'pos4_card': self.reading2.pos4_card,
+            'pos5_card': self.reading2.pos5_card,
+            'pos6_card': self.reading2.pos6_card,
+            'pos7_card': self.reading2.pos7_card,
+            'pos8_card': self.reading2.pos8_card,
+            'pos9_card': self.reading2.pos9_card,
+            'pos10_card': self.reading2.pos10_card,
+            'pos10_recap': updated_pos10_recap,
+        }
+
+        """
+        TODO: This brings up a bigger issue of API and schema design.
+              If idempotent - how should we handle the fact that for
+              a given Reading - optional fields like _mytake, _recap
+              may be populated in the existing object - but when updating
+              the API consumer is not required to send those fields.
+              This would result in no idempotency (?). So should we always
+              require all fields to be sent? And if a field is default
+              blank, require the API consumer to send a blank value? Need
+              to do more research on how to handle this.
+
+              This needs to be resolved - it seems like an edge case but
+              is the kind of thing that would lead to really weird timing
+              bugs in the future and be really hard to debug.
+        """
+
+        response = CrossReadingById().put(request, pk)
+        self.assertEqual(response.status_code, 200)
+
+        # Check that object was correctly updated in DB
+        reading_updated = CrossReading.objects.get(pk=pk)
+        self.assertEqual(reading_updated.question_asked, reading_original.question_asked)
+        self.assertEqual(reading_updated.pos3_card, updated_pos3_card)
+        self.assertEqual(reading_updated.pos3_recap, reading_original.pos3_recap)
+        self.assertEqual(reading_updated.pos10_recap, updated_pos10_recap)
+
+        # TODO: Should also check that `modified_at` was correctly updated
+        #       Test this using `freeze_time`
 
     def test_crossreadingbyid_update_invalidpk(self):
-        pass
+        request = Mock()
+        pk = self.reading1.id + 100
+
+        with self.assertRaises(ValidationError) as e:
+            response = CrossReadingById().put(request, pk)
+
+        self.assertEqual(
+            e.exception.args[0],
+            'You are trying to access a reading that does not exist. Check the specified id.',
+        )
 
     def test_crossreadingbyid_update_invaliddata(self):
-        pass
+        reading_original = CrossReading.objects.get(pk=self.reading2.id)
+        self.assertEqual(reading_original.question_asked, self.reading2.question_asked)
+        self.assertEqual(reading_original.pos3_card, self.reading2.pos3_card)
+        self.assertEqual(reading_original.pos3_recap, self.reading2.pos3_recap)
+        self.assertEqual(reading_original.pos10_recap, self.reading2.pos10_recap)
+
+        request = Mock()
+        pk = self.reading2.id
+        request.data = {
+            'date_of_reading': self.reading2.date_of_reading,
+            'question_asked': self.reading2.question_asked,
+            'pos1_card': self.reading2.pos1_card,
+            'pos2_card': self.reading2.pos2_card,
+            'pos3_card': 'not a valid card name',
+            'pos4_card': self.reading2.pos4_card,
+            'pos5_card': self.reading2.pos5_card,
+            'pos6_card': self.reading2.pos6_card,
+            'pos7_card': self.reading2.pos7_card,
+            'pos8_card': self.reading2.pos8_card,
+            'pos9_card': self.reading2.pos9_card,
+            'pos10_card': self.reading2.pos10_card,
+        }
+
+        response = CrossReadingById().put(request, pk)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(str(response.data['non_field_errors'][0]), 'This is not a valid tarot card name')
+
+        # Check that nothing was modified in the DB
+        reading_updated = CrossReading.objects.get(pk=pk)
+        self.assertEqual(reading_updated.question_asked, reading_original.question_asked)
+        self.assertEqual(reading_updated.pos3_card, reading_original.pos3_card)
+        self.assertEqual(reading_updated.pos3_recap, reading_original.pos3_recap)
+        self.assertEqual(reading_updated.pos10_recap, reading_original.pos10_recap)
 
     def test_crossreadingbyid_update_missingdata(self):
-        pass
+        reading_original = CrossReading.objects.get(pk=self.reading2.id)
+        self.assertEqual(reading_original.question_asked, self.reading2.question_asked)
+        self.assertEqual(reading_original.pos3_card, self.reading2.pos3_card)
+        self.assertEqual(reading_original.pos3_recap, self.reading2.pos3_recap)
+        self.assertEqual(reading_original.pos10_recap, self.reading2.pos10_recap)
+
+        request = Mock()
+        pk = self.reading2.id
+        request.data = {
+            'date_of_reading': self.reading2.date_of_reading,
+            'question_asked': self.reading2.question_asked,
+            'pos1_card': self.reading2.pos1_card,
+            'pos2_card': self.reading2.pos2_card,
+            # data for pos3_card is missing
+            # even though the existing object in DB is populated
+            # this should still raise an error because the field is required to be sent
+            # for idempotency
+            'pos4_card': self.reading2.pos4_card,
+            'pos5_card': self.reading2.pos5_card,
+            'pos6_card': self.reading2.pos6_card,
+            'pos7_card': self.reading2.pos7_card,
+            'pos8_card': self.reading2.pos8_card,
+            'pos9_card': self.reading2.pos9_card,
+            'pos10_card': self.reading2.pos10_card,
+        }
+
+        response = CrossReadingById().put(request, pk)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data['pos3_card'][0].code, 'required')
+
+        # Check that nothing was modified in the DB
+        reading_updated = CrossReading.objects.get(pk=pk)
+        self.assertEqual(reading_updated.question_asked, reading_original.question_asked)
+        self.assertEqual(reading_updated.pos3_card, reading_original.pos3_card)
+        self.assertEqual(reading_updated.pos3_recap, reading_original.pos3_recap)
+        self.assertEqual(reading_updated.pos10_recap, reading_original.pos10_recap)
 
     def test_crossreadingbyid_delete_success(self):
         readings = CrossReading.objects.all()
