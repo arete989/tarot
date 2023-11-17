@@ -65,9 +65,12 @@ DAY 8 (3 hours)
 * Shows the power of test driven development. Originally I thought some of these tests were overkill - but it actually caught a bug where I had forgotten to add code for validation. And also caught an issue of idempotency and made me rethink my API design.
 * CHECKPOINT: Test suite includes all CrossReadingById views and passes.
 
+DAY 9 (2 hours)
+* Wire up the URLs
+* Write test coverage = refactor existing tests to be integration tests. This is where 80/20 rule comes in - refactor is small marginal value (but needed) but takes long time because of the existing volume of code.
+* CHECKPOINT: Test suite uses requests to URLs and passes.
+
 NEXT
-* NEXT: Wire up the URLs and write test coverage
 * TODO: Add User model to ReadingCross views
-* TODO: Figure out how to handle card images
 * Goal: Get all of the API endpoints working locally
 * Goal: Deploy and able to call API endpoints from non-local server
