@@ -1,32 +1,19 @@
 import datetime
 from freezegun import freeze_time
-from unittest.mock import Mock
 
 from django.test import TestCase
-from rest_framework.exceptions import ValidationError
+from rest_framework.test import APIClient
+# Important to APIClient versus Django Client
+# to avoid 415 errors when making `PUT` requests
 
 from api.models import CrossReading
-from api.views import CrossReadingCreate, CrossReadingById
-
-
-class TestURLPatterns(TestCase):
-    """
-    TODO: This should be integrated with all of the test classes below
-          and test with URLs intead of testing the class directly. But
-          I don't have time to figure this out right now and this is
-          sufficient for test coverage.
-
-    https://stackoverflow.com/questions/35741090/how-to-test-url-in-django
-    """
-
-    def test_crossreading_url(self):
-        pass
 
 
 class TestCrossReadingCreate(TestCase):
 
     def setUp(self):
-        self.cross_reading = {
+        self.client = APIClient()
+        self.crossreading_data = {
             'date_of_reading': datetime.date(2020, 1, 1),
             'question_asked': 'What will happen?',
             'pos1_card': 'empress',
@@ -48,28 +35,27 @@ class TestCrossReadingCreate(TestCase):
         readings = CrossReading.objects.all()
         self.assertEqual(readings.count(), 0)
 
-        request = Mock()
-        request.data = self.cross_reading
-
-        response = CrossReadingCreate().post(request)
+        url = '/crossreading/create/'
+        data = self.crossreading_data
+        response = self.client.post(url, data)
         self.assertEqual(response.status_code, 201)
 
         # Make sure that CrossReading object was correctly created in DB
         readings = CrossReading.objects.all()
         self.assertEqual(readings.count(), 1)
         reading = readings[0]
-        self.assertEqual(reading.date_of_reading, self.cross_reading['date_of_reading'])
-        self.assertEqual(reading.question_asked, self.cross_reading['question_asked'])
-        self.assertEqual(reading.pos1_card, self.cross_reading['pos1_card'])
-        self.assertEqual(reading.pos2_card, self.cross_reading['pos2_card'])
-        self.assertEqual(reading.pos3_card, self.cross_reading['pos3_card'])
-        self.assertEqual(reading.pos4_card, self.cross_reading['pos4_card'])
-        self.assertEqual(reading.pos5_card, self.cross_reading['pos5_card'])
-        self.assertEqual(reading.pos6_card, self.cross_reading['pos6_card'])
-        self.assertEqual(reading.pos7_card, self.cross_reading['pos7_card'])
-        self.assertEqual(reading.pos8_card, self.cross_reading['pos8_card'])
-        self.assertEqual(reading.pos9_card, self.cross_reading['pos9_card'])
-        self.assertEqual(reading.pos10_card, self.cross_reading['pos10_card'])
+        self.assertEqual(reading.date_of_reading, data['date_of_reading'])
+        self.assertEqual(reading.question_asked, data['question_asked'])
+        self.assertEqual(reading.pos1_card, data['pos1_card'])
+        self.assertEqual(reading.pos2_card, data['pos2_card'])
+        self.assertEqual(reading.pos3_card, data['pos3_card'])
+        self.assertEqual(reading.pos4_card, data['pos4_card'])
+        self.assertEqual(reading.pos5_card, data['pos5_card'])
+        self.assertEqual(reading.pos6_card, data['pos6_card'])
+        self.assertEqual(reading.pos7_card, data['pos7_card'])
+        self.assertEqual(reading.pos8_card, data['pos8_card'])
+        self.assertEqual(reading.pos9_card, data['pos9_card'])
+        self.assertEqual(reading.pos10_card, data['pos10_card'])
         # Also check that it didn't randomly fill out fields that were not populated
         self.assertEqual(reading.pos7_mytake, '')
         self.assertEqual(reading.pos10_recap, '')
@@ -81,34 +67,33 @@ class TestCrossReadingCreate(TestCase):
         readings = CrossReading.objects.all()
         self.assertEqual(readings.count(), 0)
 
-        request = Mock()
-        request.data = self.cross_reading.copy()
+        url = '/crossreading/create/'
+        data = self.crossreading_data.copy()
         # This is extra data beyond the required minimum
-        request.data['pos6_mytake'] = 'A new passion that is beginning'
-        request.data['pos8_recap'] = '6 months later this turned out to be correct'
-
-        response = CrossReadingCreate().post(request)
+        data['pos6_mytake'] = 'A new passion that is beginning'
+        data['pos8_recap'] = '6 months later this turned out to be correct'
+        response = self.client.post(url, data)
         self.assertEqual(response.status_code, 201)
 
         # Make sure that CrossReading object was correctly created in DB
         readings = CrossReading.objects.all()
         self.assertEqual(readings.count(), 1)
         reading = readings[0]
-        self.assertEqual(reading.date_of_reading, self.cross_reading['date_of_reading'])
-        self.assertEqual(reading.question_asked, self.cross_reading['question_asked'])
-        self.assertEqual(reading.pos1_card, self.cross_reading['pos1_card'])
-        self.assertEqual(reading.pos2_card, self.cross_reading['pos2_card'])
-        self.assertEqual(reading.pos3_card, self.cross_reading['pos3_card'])
-        self.assertEqual(reading.pos4_card, self.cross_reading['pos4_card'])
-        self.assertEqual(reading.pos5_card, self.cross_reading['pos5_card'])
-        self.assertEqual(reading.pos6_card, self.cross_reading['pos6_card'])
-        self.assertEqual(reading.pos7_card, self.cross_reading['pos7_card'])
-        self.assertEqual(reading.pos8_card, self.cross_reading['pos8_card'])
-        self.assertEqual(reading.pos9_card, self.cross_reading['pos9_card'])
-        self.assertEqual(reading.pos10_card, self.cross_reading['pos10_card'])
+        self.assertEqual(reading.date_of_reading, data['date_of_reading'])
+        self.assertEqual(reading.question_asked, data['question_asked'])
+        self.assertEqual(reading.pos1_card, data['pos1_card'])
+        self.assertEqual(reading.pos2_card, data['pos2_card'])
+        self.assertEqual(reading.pos3_card, data['pos3_card'])
+        self.assertEqual(reading.pos4_card, data['pos4_card'])
+        self.assertEqual(reading.pos5_card, data['pos5_card'])
+        self.assertEqual(reading.pos6_card, data['pos6_card'])
+        self.assertEqual(reading.pos7_card, data['pos7_card'])
+        self.assertEqual(reading.pos8_card, data['pos8_card'])
+        self.assertEqual(reading.pos9_card, data['pos9_card'])
+        self.assertEqual(reading.pos10_card, data['pos10_card'])
         # Make sure that extra data that I sent was populated
-        self.assertEqual(reading.pos6_mytake, request.data['pos6_mytake'])
-        self.assertEqual(reading.pos8_recap, request.data['pos8_recap'])
+        self.assertEqual(reading.pos6_mytake, data['pos6_mytake'])
+        self.assertEqual(reading.pos8_recap, data['pos8_recap'])
         # And that fields I did NOT send were NOT populated
         self.assertEqual(reading.pos7_mytake, '')
         self.assertEqual(reading.pos10_recap, '')
@@ -120,11 +105,10 @@ class TestCrossReadingCreate(TestCase):
         readings = CrossReading.objects.all()
         self.assertEqual(readings.count(), 0)
 
-        request = Mock()
-        request.data = self.cross_reading.copy()
-        del request.data['pos1_card']  # Remove one of the required fields
-
-        response = CrossReadingCreate().post(request)
+        url = '/crossreading/create/'
+        data = self.crossreading_data.copy()
+        del data['pos1_card']  # Remove one of the required fields
+        response = self.client.post(url, data)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data['pos1_card'][0].code, 'required')
 
@@ -139,11 +123,10 @@ class TestCrossReadingCreate(TestCase):
         readings = CrossReading.objects.all()
         self.assertEqual(readings.count(), 0)
 
-        request = Mock()
-        request.data = self.cross_reading.copy()
-        request.data['pos5_card'] = 'not a real card name'
-
-        response = CrossReadingCreate().post(request)
+        url = '/crossreading/create/'
+        data = self.crossreading_data.copy()
+        data['pos5_card'] = 'not a real card name'
+        response = self.client.post(url, data)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(str(response.data['non_field_errors'][0]), 'This is not a valid tarot card name')
 
@@ -156,6 +139,7 @@ class TestCrossReadingCreate(TestCase):
 class TestCrossReadingById(TestCase):
 
     def setUp(self):
+        self.client = APIClient()
         self.reading1 = CrossReading(
             date_of_reading=datetime.date(2020, 1, 1),
             question_asked='What will happen?',
@@ -192,10 +176,9 @@ class TestCrossReadingById(TestCase):
         self.reading2.save()
 
     def test_crossreadingbyid_get_success(self):
-        request = Mock()
         pk = self.reading2.id
-
-        response = CrossReadingById().get(request, pk)
+        url = '/crossreading/{}/'.format(pk)
+        response = self.client.get(url)
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data, {
@@ -237,14 +220,13 @@ class TestCrossReadingById(TestCase):
         })
 
     def test_crossreadingbyid_get_invalidpk(self):
-        request = Mock()
         pk = self.reading1.id + 100
+        url = '/crossreading/{}/'.format(pk)
+        response = self.client.get(url)
 
-        with self.assertRaises(ValidationError) as e:
-            response = CrossReadingById().get(request, pk)
-
+        self.assertEqual(response.status_code, 400)
         self.assertEqual(
-            e.exception.args[0],
+            response.data[0],
             'You are trying to access a reading that does not exist. Check the specified id.',
         )
 
@@ -255,15 +237,15 @@ class TestCrossReadingById(TestCase):
         self.assertEqual(reading_original.pos3_recap, self.reading2.pos3_recap)
         self.assertEqual(reading_original.pos10_recap, self.reading2.pos10_recap)
 
-        request = Mock()
         pk = self.reading2.id
+        url = '/crossreading/{}/'.format(pk)
         # Update the value for pos3_card
         # Add a value for pos10_recap which was blank before
         # Nothing else is changed
         # Need to send the entire object again for idempotency
         updated_pos3_card = 'five of cups'
         updated_pos10_recap = 'reevaluating this 6 months later'
-        request.data = {
+        data = {
             'date_of_reading': self.reading2.date_of_reading,
             'question_asked': self.reading2.question_asked,
             'pos1_card': self.reading2.pos1_card,
@@ -295,7 +277,7 @@ class TestCrossReadingById(TestCase):
               bugs in the future and be really hard to debug.
         """
 
-        response = CrossReadingById().put(request, pk)
+        response = self.client.put(path=url, format='json', data=data)
         self.assertEqual(response.status_code, 200)
 
         # Check that object was correctly updated in DB
@@ -309,14 +291,14 @@ class TestCrossReadingById(TestCase):
         #       Test this using `freeze_time`
 
     def test_crossreadingbyid_update_invalidpk(self):
-        request = Mock()
         pk = self.reading1.id + 100
+        url = '/crossreading/{}/'.format(pk)
+        data = {'dummy': 'does not matter what we send'}
+        response = self.client.put(path=url, format='json', data=data)
 
-        with self.assertRaises(ValidationError) as e:
-            response = CrossReadingById().put(request, pk)
-
+        self.assertEqual(response.status_code, 400)
         self.assertEqual(
-            e.exception.args[0],
+            response.data[0],
             'You are trying to access a reading that does not exist. Check the specified id.',
         )
 
@@ -327,9 +309,9 @@ class TestCrossReadingById(TestCase):
         self.assertEqual(reading_original.pos3_recap, self.reading2.pos3_recap)
         self.assertEqual(reading_original.pos10_recap, self.reading2.pos10_recap)
 
-        request = Mock()
         pk = self.reading2.id
-        request.data = {
+        url = '/crossreading/{}/'.format(pk)
+        data = {
             'date_of_reading': self.reading2.date_of_reading,
             'question_asked': self.reading2.question_asked,
             'pos1_card': self.reading2.pos1_card,
@@ -343,8 +325,7 @@ class TestCrossReadingById(TestCase):
             'pos9_card': self.reading2.pos9_card,
             'pos10_card': self.reading2.pos10_card,
         }
-
-        response = CrossReadingById().put(request, pk)
+        response = self.client.put(path=url, format='json', data=data)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(str(response.data['non_field_errors'][0]), 'This is not a valid tarot card name')
 
@@ -362,9 +343,9 @@ class TestCrossReadingById(TestCase):
         self.assertEqual(reading_original.pos3_recap, self.reading2.pos3_recap)
         self.assertEqual(reading_original.pos10_recap, self.reading2.pos10_recap)
 
-        request = Mock()
         pk = self.reading2.id
-        request.data = {
+        url = '/crossreading/{}/'.format(pk)
+        data = {
             'date_of_reading': self.reading2.date_of_reading,
             'question_asked': self.reading2.question_asked,
             'pos1_card': self.reading2.pos1_card,
@@ -381,8 +362,7 @@ class TestCrossReadingById(TestCase):
             'pos9_card': self.reading2.pos9_card,
             'pos10_card': self.reading2.pos10_card,
         }
-
-        response = CrossReadingById().put(request, pk)
+        response = self.client.put(path=url, format='json', data=data)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data['pos3_card'][0].code, 'required')
 
@@ -397,10 +377,9 @@ class TestCrossReadingById(TestCase):
         readings = CrossReading.objects.all()
         self.assertEqual(readings.count(), 2)
 
-        request = Mock()
         pk = self.reading1.id
-
-        response = CrossReadingById().delete(request, pk)
+        url = '/crossreading/{}/'.format(pk)
+        response = self.client.delete(url)
         self.assertEqual(response.status_code, 204)
 
         # Check that reading1 was deleted and reading2 is still there
@@ -418,14 +397,12 @@ class TestCrossReadingById(TestCase):
         readings = CrossReading.objects.all()
         self.assertEqual(readings.count(), 2)
 
-        request = Mock()
         pk = self.reading1.id + 100
-
-        with self.assertRaises(ValidationError) as e:
-            response = CrossReadingById().delete(request, pk)
-
+        url = '/crossreading/{}/'.format(pk)
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, 400)
         self.assertEqual(
-            e.exception.args[0],
+            response.data[0],
             'You are trying to access a reading that does not exist. Check the specified id.',
         )
 
